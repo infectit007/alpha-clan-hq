@@ -218,23 +218,28 @@ const TOP_PERFORMERS = [
 // When real players are approved, add them here with isPlaceholder: false
 // Once you have 5+ real players, set HIDE_PLACEHOLDERS = true
 const REAL_PLAYERS = [
-  // Example of how a real player entry looks — uncomment and fill in when ready:
-  // {
-  //   id: 'real-1',
-  //   name: "Infected Mush 01",
-  //   tag: "#2435421",
-  //   isPlaceholder: false,
-  //   kd: 2.10, kills: 1840, wins: 32, matches: 180, damage: 480_000, gulag: 58, top5: 41,
-  //   bestMode: "resurgence",
-  //   avatar: 0,
-  //   modes: {
-  //     resurgence:           { kd: 2.80, kills: 900,  wins: 20, matches: 90,  damage: 240_000 },
-  //     "resurgence-caldera": { kd: 1.90, kills: 380,  wins: 6,  matches: 40,  damage: 96_000  },
-  //     "battle-royale":      { kd: 1.60, kills: 480,  wins: 6,  matches: 42,  damage: 126_000 },
-  //     plunder:              { kd: 2.40, kills: 60,   wins: 0,  matches: 6,   damage: 18_000  },
-  //     ranked:               { kd: 1.80, kills: 20,   wins: 0,  matches: 2,   damage: 0       },
-  //   }
-  // },
+  {
+    id: 'founder-1',
+    name: "INFECTED_MUSH",
+    displayName: "Infected Mush 01",
+    tag: "#2435421",
+    isPlaceholder: false,
+    isReal: true,
+    activisionId: "Infected Mush 01#2435421",
+    discord: "infected_mush",
+    platform: "PC",
+    kd: 0, kills: 0, wins: 0, matches: 0,
+    damage: 0, gulag: 0, top5: 0,
+    bestMode: "resurgence",
+    avatar: 0,
+    modes: {
+      resurgence:           { kd: 0, kills: 0, wins: 0, matches: 0, damage: 0 },
+      "resurgence-caldera": { kd: 0, kills: 0, wins: 0, matches: 0, damage: 0 },
+      "battle-royale":      { kd: 0, kills: 0, wins: 0, matches: 0, damage: 0 },
+      plunder:              { kd: 0, kills: 0, wins: 0, matches: 0, damage: 0 },
+      ranked:               { kd: 0, kills: 0, wins: 0, matches: 0, damage: 0 },
+    }
+  },
 ];
 
 // ===== PRIORITY SYSTEM =====
