@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALPHA | Request Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-bracket">[</span><span class="logo-text">ALPHA</span><span class="logo-bracket">]</span>
+    </a>
+    <a href="login.html" class="btn btn-ghost" style="font-size:12px;padding:6px 16px;">ALREADY A MEMBER? LOGIN</a>
+  </nav>
+
+  <main class="auth-page">
+    <div class="auth-box auth-box-wide">
+      <div class="auth-header">
+        <div class="auth-tag">// RECRUITMENT</div>
+        <h1 class="auth-title">REQUEST ACCESS</h1>
+        <p class="auth-sub">Submit your application. Awaits Commander or Soldier approval.</p>
+      </div>
+
+      <!-- Rank ladder display -->
+      <div class="rank-ladder">
+        <div class="rank-step rank-recruit active-rank">
+          <span class="rank-dot"></span>
+          <span class="rank-name">RECRUIT</span>
+          <span class="rank-desc">You are here — pending</span>
+        </div>
+        <div class="rank-step rank-soldier">
+          <span class="rank-dot"></span>
+          <span class="rank-name">SOLDIER</span>
+          <span class="rank-desc">Can approve recruits</span>
+        </div>
+        <div class="rank-step rank-commander">
+          <span class="rank-dot"></span>
+          <span class="rank-name">COMMANDER</span>
+          <span class="rank-desc">Can approve + manage</span>
+        </div>
+        <div class="rank-step rank-founder">
+          <span class="rank-dot"></span>
+          <span class="rank-name">FOUNDER</span>
+          <span class="rank-desc">Full control</span>
+        </div>
+      </div>
+
+      <div class="auth-alert" id="authAlert" style="display:none;"></div>
+
+      <!-- Success state (hidden until submitted) -->
+      <div id="successState" style="display:none;" class="success-state">
+        <div class="success-icon">✓</div>
+        <h2 class="success-title">REQUEST SUBMITTED</h2>
+        <p class="success-sub">Your application is in the queue. A Commander or Soldier will review it.<br>You'll be able to log in once approved.</p>
+        <div class="success-id" id="successId"></div>
+        <a href="login.html" class="btn btn-ghost btn-full" style="margin-top:24px;">BACK TO LOGIN</a>
+      </div>
+
+      <form class="auth-form" id="registerForm" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label">EMAIL <span class="form-required">*</span></label>
+          <div class="form-input-wrap">
+            <span class="form-icon">@</span>
+            <input type="email" id="regEmail" placeholder="you@email.com" required>
+          </div>
+          <span class="form-hint">Used for login only — not shown to other members</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">ACTIVISION ID <span class="form-required">*</span></label>
+            <div class="form-input-wrap">
+              <span class="form-icon">◈</span>
+              <input type="text" id="regActivision" placeholder="YourName#1234" required>
+            </div>
+            <span class="form-hint">Found in your COD profile</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">DISCORD USERNAME <span class="form-required">*</span></label>
+            <div class="form-input-wrap">
+              <span class="form-icon">⬡</span>
+              <input type="text" id="regDiscord" placeholder="username or user#0000" required>
+            </div>
+            <span class="form-hint">So we can verify in the server</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">PASSWORD <span class="form-required">*</span></label>
+            <div class="form-input-wrap">
+              <span class="form-icon">◉</span>
+              <input type="password" id="regPassword" placeholder="Min 8 characters" required minlength="8">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">CONFIRM PASSWORD <span class="form-required">*</span></label>
+            <div class="form-input-wrap">
+              <span class="form-icon">◉</span>
+              <input type="password" id="regPasswordConfirm" placeholder="Repeat password" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">WHY DO YOU WANT TO JOIN ALPHA? <span class="form-required">*</span></label>
+          <textarea id="regBio" placeholder="Tell the clan why you want in. What's your playstyle? What modes do you grind?" rows="3" required maxlength="300"></textarea>
+          <span class="form-hint"><span id="bioCount">0</span>/300</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">MAIN PLATFORM</label>
+          <div class="platform-select">
+            <label class="platform-option">
+              <input type="radio" name="platform" value="PC" checked>
+              <span>PC</span>
+            </label>
+            <label class="platform-option">
+              <input type="radio" name="platform" value="PlayStation">
+              <span>PlayStation</span>
+            </label>
+            <label class="platform-option">
+              <input type="radio" name="platform" value="Xbox">
+              <span>Xbox</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-check">
+          <input type="checkbox" id="regAgree" required>
+          <label for="regAgree">I understand my request must be approved by a Commander or Soldier before I can access the clan platform.</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="registerBtn">
+          <span class="btn-text">SUBMIT APPLICATION</span>
+          <span class="btn-loader" style="display:none;">SUBMITTING...</span>
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/matrix.js"></script>
+  <script src="js/supabase.js"></script>
+  <script>
+    // Bio character counter
+    document.getElementById('regBio').addEventListener('input', function() {
+      document.getElementById('bioCount').textContent = this.value.length;
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const activisionId = document.getElementById('regActivision').value.trim();
+      const email        = document.getElementById('regEmail').value.trim();
+      const discord      = document.getElementById('regDiscord').value.trim();
+      const password     = document.getElementById('regPassword').value;
+      const confirm      = document.getElementById('regPasswordConfirm').value;
+      const bio          = document.getElementById('regBio').value.trim();
+      const platform     = document.querySelector('input[name="platform"]:checked').value;
+      const btn          = document.getElementById('registerBtn');
+
+      // Validate
+      if (password !== confirm) {
+        showAlert('Passwords do not match.', 'error'); return;
+      }
+      if (!activisionId.includes('#')) {
+        showAlert('Activision ID must include # and your tag (e.g. Name#1234).', 'error'); return;
+      }
+
+      btn.querySelector('.btn-text').style.display   = 'none';
+      btn.querySelector('.btn-loader').style.display = 'inline';
+      btn.disabled = true;
+
+      try {
+        // Create auth user with real email
+        const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
+          email, password,
+          options: { data: { activision_id: activisionId, discord, platform } }
+        });
+
+        if (authError) throw authError;
+
+        // Insert member record with pending status
+        const { error: memberError } = await window.supabaseClient.from('members').insert({
+          user_id:       authData.user.id,
+          activision_id: activisionId,
+          discord,
+          platform,
+          bio,
+          rank:   'RECRUIT',
+          status: 'pending',
+          username: activisionId.split('#')[0],
+        });
+
+        if (memberError) throw memberError;
+
+        // Show success
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('successState').style.display = 'block';
+        document.getElementById('successId').textContent = `Application ID: ${authData.user.id.slice(0,8).toUpperCase()}`;
+
+      } catch (err) {
+        showAlert(err.message || 'Submission failed. Try again.', 'error');
+        btn.querySelector('.btn-text').style.display   = 'inline';
+        btn.querySelector('.btn-loader').style.display = 'none';
+        btn.disabled = false;
+      }
+    });
+
+    function showAlert(msg, type) {
+      const el = document.getElementById('authAlert');
+      el.textContent = msg;
+      el.className = `auth-alert auth-alert-${type}`;
+      el.style.display = 'block';
+    }
+
+    function activisionIdToEmail(id) {
+      return id.toLowerCase().replace('#', '-') + '@alpha-clan.gg';
+    }
+  </script>
+</body>
+</html>

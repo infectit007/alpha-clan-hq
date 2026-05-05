@@ -1,0 +1,49 @@
+name: Health Check
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Health Check
+        run: |
+          SITE_URL="https://infectit007.github.io/alpha-clan-hq/"
+          STATUS="ok"
+          ISSUES=""
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          # Check GitHub Pages
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$SITE_URL" 2>&1)
+          if [ "$HTTP" != "200" ]; then
+            STATUS="down"
+            ISSUES="$ISSUES,site:HTTP_$HTTP"
+          fi
+
+          # Check Supabase
+          SB=$(curl -s --max-time 10 "https://ywqcmrfkguuofhyfbuxb.supabase.co/rest/v1/" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3cWNtcmZrZ3V1b2ZoeWZidXhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjI3MjgsImV4cCI6MjA5MzQ5ODcyOH0.nFXnFeDeSAOaw0ShQCnU1BJGtO4vAa3AgKMqHyD-fhY" 2>&1)
+          if ! echo "$SB" | grep -q "swagger"; then
+            STATUS="${STATUS}degraded"
+            ISSUES="$ISSUES,supabase:unreachable"
+          fi
+
+          echo "{\"status\":\"$STATUS\",\"issues\":\"${ISSUES#,}\",\"checked_at\":\"$NOW\",\"last_http\":\"$HTTP\"}" > status.json
+          cat status.json
+
+      - name: Commit Status
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add status.json
+          git diff --staged --quiet || git commit -m "health: $(date -u +'%Y-%m-%d %H:%M') UTC [skip ci]"
+          git push

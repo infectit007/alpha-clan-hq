@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALPHA | Warzone Clan</title>
+  <meta name="description" content="ALPHA Clan HQ — Private Warzone stats dashboard. Elite operator stats, match tracking, clan feed. Built for the squad.">
+  <meta property="og:title" content="ALPHA Clan HQ | Warzone Stats">
+  <meta property="og:description" content="Private Warzone clan platform — live stats, match history, and clan feed.">
+  <meta property="og:url" content="https://infectit007.github.io/alpha-clan-hq/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Matrix binary rain -->
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
+  <!-- Scanline overlay -->
+  <div class="scanlines" aria-hidden="true"></div>
+  <!-- Background grid -->
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span class="logo-bracket">[</span>
+      <span class="logo-text">ALPHA</span>
+      <span class="logo-bracket">]</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#stats" class="nav-link active">STATS</a></li>
+      <li><a href="roster.html" class="nav-link">ROSTER</a></li>
+      <li><a href="matches.html" class="nav-link">MATCHES</a></li>
+      <li><a href="social.html" class="nav-link">FEED</a></li>
+      <li><a href="register.html" class="nav-link nav-cta">JOIN CLAN</a></li>
+    </ul>
+    <button class="nav-burger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">WARZONE CLAN // SEASON 06</div>
+      <h1 class="hero-title">
+        <span class="title-line">ALPHA</span>
+        <span class="title-line title-sub">TEAM HQ</span>
+      </h1>
+      <p class="hero-desc">Elite stats. Private clan feed. Real-time match tracking.<br>Built for the squad. Locked to the clan.</p>
+      <div class="hero-actions">
+        <a href="login.html" class="btn btn-primary">REQUEST ACCESS</a>
+        <a href="#stats" class="btn btn-ghost">VIEW STATS ↓</a>
+      </div>
+    </div>
+    <div class="hero-live-ticker" aria-live="polite">
+      <span class="ticker-dot"></span>
+      <span class="ticker-text" id="tickerText">GHOST_ACTUAL just dropped 18 kills in Resurgence · K/D THIS WEEK: 2.31 CLAN AVG · Last match: Victory — Vondel Resurgence</span>
+    </div>
+  </header>
+
+  <!-- ===== CLAN SUMMARY BAR ===== -->
+  <section class="summary-bar">
+    <div class="summary-item">
+      <span class="summary-label">CLAN RANK</span>
+      <span class="summary-value">#<span class="counter" data-target="7">0</span></span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">ACTIVE MEMBERS</span>
+      <span class="summary-value"><span class="counter" data-target="24">0</span></span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">CLAN AVG K/D</span>
+      <span class="summary-value accent"><span class="counter-float" data-target="2.31">0.00</span></span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">WINS THIS WEEK</span>
+      <span class="summary-value"><span class="counter" data-target="47">0</span></span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">STATUS</span>
+      <span class="summary-value status-online"><span class="pulse-dot"></span>ONLINE</span>
+    </div>
+  </section>
+
+  <!-- ===== STATS SECTION ===== -->
+  <main id="stats" class="stats-section">
+    <div class="section-header">
+      <div class="section-label">// STATS DATABASE</div>
+      <h2 class="section-title">PLAYER PERFORMANCE</h2>
+      <p class="section-sub">Live stats pulled per gameplay mode. Select a player or filter by mode.</p>
+    </div>
+
+    <!-- Mode Selector -->
+    <div class="mode-selector">
+      <button class="mode-btn active" data-mode="all">ALL MODES</button>
+      <button class="mode-btn" data-mode="resurgence">RESURGENCE</button>
+      <button class="mode-btn" data-mode="resurgence-caldera">RESURGENCE — CALDERA</button>
+      <button class="mode-btn" data-mode="battle-royale">BATTLE ROYALE</button>
+      <button class="mode-btn" data-mode="plunder">PLUNDER</button>
+      <button class="mode-btn" data-mode="ranked">RANKED</button>
+    </div>
+
+    <!-- Sort + Search -->
+    <div class="table-controls">
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="playerSearch" placeholder="SEARCH PLAYER..." autocomplete="off">
+      </div>
+      <div class="sort-controls">
+        <span class="sort-label">SORT:</span>
+        <button class="sort-btn active" data-sort="kd">K/D</button>
+        <button class="sort-btn" data-sort="kills">KILLS</button>
+        <button class="sort-btn" data-sort="wins">WINS</button>
+        <button class="sort-btn" data-sort="damage">DAMAGE</button>
+      </div>
+    </div>
+
+    <!-- Stats Table -->
+    <div class="stats-table-wrap">
+      <table class="stats-table" id="statsTable">
+        <thead>
+          <tr>
+            <th class="th-rank">#</th>
+            <th class="th-player">PLAYER</th>
+            <th>K/D</th>
+            <th>KILLS</th>
+            <th>WINS</th>
+            <th>MATCHES</th>
+            <th>DAMAGE</th>
+            <th>GULAG %</th>
+            <th>TOP 5 %</th>
+            <th class="th-mode">BEST MODE</th>
+          </tr>
+        </thead>
+        <tbody id="statsBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Player Mode Breakdown Cards (shown on player select) -->
+    <div class="mode-breakdown" id="modeBreakdown" style="display:none;">
+      <div class="breakdown-header">
+        <span class="breakdown-player-name" id="breakdownName">—</span>
+        <button class="breakdown-close" id="breakdownClose">✕ CLOSE</button>
+      </div>
+      <div class="breakdown-cards" id="breakdownCards"></div>
+    </div>
+  </main>
+
+  <!-- ===== RECENT MATCHES ===== -->
+  <section class="matches-section">
+    <div class="section-header">
+      <div class="section-label">// MATCH LOG</div>
+      <h2 class="section-title">RECENT MISSIONS</h2>
+    </div>
+    <div class="matches-grid" id="matchesGrid"></div>
+    <div class="matches-footer">
+      <a href="matches.html" class="btn btn-ghost">VIEW ALL MATCHES →</a>
+      <button class="btn btn-ghost" onclick="postLeaderboardToDiscord(window.ACTIVE_PLAYERS || PLAYERS)" style="border-color:rgba(88,101,242,0.4);color:#5865f2;">
+        ⬡ POST LEADERBOARD TO DISCORD
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== TOP PERFORMERS ===== -->
+  <section class="performers-section">
+    <div class="section-header">
+      <div class="section-label">// THIS WEEK</div>
+      <h2 class="section-title">TOP OPERATORS</h2>
+    </div>
+    <div class="performers-grid" id="performersGrid"></div>
+  </section>
+
+  <!-- ===== DISCORD CTA ===== -->
+  <section class="discord-cta">
+    <div class="discord-content">
+      <div class="discord-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.056a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" fill="currentColor"/></svg>
+      </div>
+      <div class="discord-text">
+        <h3>MATCH ALERTS IN YOUR SERVER</h3>
+        <p>Connect Discord to get auto-posted match summaries, win streaks, and clan leaderboard updates — directly in your clan channel.</p>
+      </div>
+      <a href="#" class="btn btn-primary">CONNECT DISCORD</a>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-logo">
+      <span class="logo-bracket">[</span>ALPHA<span class="logo-bracket">]</span>
+    </div>
+    <p class="footer-sub">ALPHA Clan HQ · Warzone · Private Platform</p>
+    <p class="footer-note">Stats sourced via tracker.gg API. Not affiliated with Activision or Raven Software.</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/discord.js"></script>
+  <script src="js/stats.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/matrix.js"></script>
+</body>
+</html>

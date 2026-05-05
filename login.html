@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALPHA | Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-bracket">[</span>
+      <span class="logo-text">ALPHA</span>
+      <span class="logo-bracket">]</span>
+    </a>
+  </nav>
+
+  <main class="auth-page">
+    <div class="auth-box">
+      <div class="auth-header">
+        <div class="auth-tag">// SECURE ACCESS</div>
+        <h1 class="auth-title">OPERATOR LOGIN</h1>
+        <p class="auth-sub">Authorized personnel only</p>
+      </div>
+
+      <div class="auth-alert" id="authAlert" style="display:none;"></div>
+
+      <form class="auth-form" id="loginForm" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label">EMAIL</label>
+          <div class="form-input-wrap">
+            <span class="form-icon">@</span>
+            <input type="email" id="loginEmail" placeholder="you@email.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">PASSWORD</label>
+          <div class="form-input-wrap">
+            <span class="form-icon">◉</span>
+            <input type="password" id="loginPassword" placeholder="••••••••••••" required>
+            <button type="button" class="form-eye" id="togglePw">👁</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+          <span class="btn-text">AUTHENTICATE</span>
+          <span class="btn-loader" style="display:none;">AUTHENTICATING...</span>
+        </button>
+      </form>
+
+      <div class="auth-divider"><span>NO ACCOUNT?</span></div>
+
+      <a href="register.html" class="btn btn-ghost btn-full">REQUEST CLAN ACCESS</a>
+
+      <div class="auth-footer-note">
+        Access restricted to ALPHA clan members.<br>
+        New recruits require Commander or Soldier approval.
+      </div>
+    </div>
+  </main>
+
+  <script src="js/matrix.js"></script>
+  <script src="js/supabase.js"></script>
+  <script>
+    // Toggle password visibility
+    document.getElementById('togglePw').addEventListener('click', function() {
+      const pw = document.getElementById('loginPassword');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    });
+
+    // Login form
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email    = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn      = document.getElementById('loginBtn');
+      const alert    = document.getElementById('authAlert');
+
+      btn.querySelector('.btn-text').style.display   = 'none';
+      btn.querySelector('.btn-loader').style.display = 'inline';
+      btn.disabled = true;
+      alert.style.display = 'none';
+
+      try {
+        // Build email from activision ID for Supabase auth
+        const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+
+        if (error) throw error;
+
+        // Check member status
+        const { data: member } = await window.supabaseClient
+          .from('members')
+          .select('status, rank, username')
+          .eq('user_id', data.user.id)
+          .single();
+
+        if (!member || member.status === 'pending') {
+          await window.supabaseClient.auth.signOut();
+          showAlert('Your request is still pending approval by a Commander or Soldier.', 'warning');
+          return;
+        }
+        if (member.status === 'denied') {
+          await window.supabaseClient.auth.signOut();
+          showAlert('Your access request was denied. Contact a clan officer.', 'error');
+          return;
+        }
+
+        // Store session info
+        localStorage.setItem('alpha_member', JSON.stringify(member));
+        window.location.href = 'index.html';
+
+      } catch (err) {
+        showAlert(err.message || 'Authentication failed. Check your credentials.', 'error');
+      } finally {
+        btn.querySelector('.btn-text').style.display   = 'inline';
+        btn.querySelector('.btn-loader').style.display = 'none';
+        btn.disabled = false;
+      }
+    });
+
+    function showAlert(msg, type) {
+      const el = document.getElementById('authAlert');
+      el.textContent = msg;
+      el.className = `auth-alert auth-alert-${type}`;
+      el.style.display = 'block';
+    }
+
+    function activisionIdToEmail(id) {
+      // Convert "Name#1234" → "name-1234@alpha-clan.gg" for Supabase
+      return id.toLowerCase().replace('#', '-') + '@alpha-clan.gg';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALPHA | Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-bracket">[</span><span class="logo-text">ALPHA</span><span class="logo-bracket">]</span>
+    </a>
+    <div class="nav-right">
+      <span class="admin-badge">⬡ ADMIN PANEL</span>
+      <a href="index.html" class="nav-link">← BACK TO HQ</a>
+    </div>
+  </nav>
+
+  <!-- Access denied state -->
+  <div id="accessDenied" style="display:none;" class="auth-page">
+    <div class="auth-box">
+      <div class="auth-header">
+        <div class="auth-tag" style="color:var(--red);">// ACCESS DENIED</div>
+        <h1 class="auth-title" style="color:var(--red);">RESTRICTED</h1>
+        <p class="auth-sub">This panel requires Commander rank or above.</p>
+      </div>
+      <a href="index.html" class="btn btn-ghost btn-full">RETURN TO HQ</a>
+    </div>
+  </div>
+
+  <main class="admin-main" id="adminMain" style="display:none;">
+
+    <!-- Header -->
+    <div class="admin-header">
+      <div>
+        <div class="section-label">// COMMAND CENTER</div>
+        <h1 class="section-title">ADMIN PANEL</h1>
+      </div>
+      <div class="admin-session">
+        <span class="admin-session-rank" id="sessionRank">—</span>
+        <span class="admin-session-name" id="sessionName">—</span>
+        <button class="btn btn-ghost" id="logoutBtn" style="font-size:12px;padding:6px 14px;">LOGOUT</button>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="admin-stats-bar">
+      <div class="admin-stat">
+        <span class="admin-stat-val" id="statPending">—</span>
+        <span class="admin-stat-label">PENDING</span>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat-val accent" id="statApproved">—</span>
+        <span class="admin-stat-label">APPROVED</span>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat-val" style="color:var(--red)" id="statDenied">—</span>
+        <span class="admin-stat-label">DENIED</span>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat-val" id="statTotal">—</span>
+        <span class="admin-stat-label">TOTAL MEMBERS</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="pending">PENDING REQUESTS</button>
+      <button class="admin-tab" data-tab="members">ALL MEMBERS</button>
+      <button class="admin-tab" data-tab="denied">DENIED</button>
+    </div>
+
+    <!-- Pending tab -->
+    <div class="admin-tab-content" id="tab-pending">
+      <div class="admin-empty" id="pendingEmpty" style="display:none;">
+        <span>✓</span> No pending requests. All clear, operator.
+      </div>
+      <div class="admin-cards" id="pendingCards"></div>
+    </div>
+
+    <!-- Members tab -->
+    <div class="admin-tab-content" id="tab-members" style="display:none;">
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="membersTable">
+          <thead>
+            <tr>
+              <th>PLAYER</th>
+              <th>ACTIVISION ID</th>
+              <th>DISCORD</th>
+              <th>PLATFORM</th>
+              <th>RANK</th>
+              <th>JOINED</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="membersBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Denied tab -->
+    <div class="admin-tab-content" id="tab-denied" style="display:none;">
+      <div class="admin-cards" id="deniedCards"></div>
+    </div>
+
+  </main>
+
+  <script src="js/matrix.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/discord.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

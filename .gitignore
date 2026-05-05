@@ -1,0 +1,10 @@
+# Local config with tokens (not committed)
+js/config.local.js
+config.discord.js
+
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

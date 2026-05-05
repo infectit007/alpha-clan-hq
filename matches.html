@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALPHA | Match History</title>
+  <meta name="description" content="ALPHA Clan Warzone match history — recent missions and results.">
+  <meta property="og:title" content="ALPHA Clan HQ | Matches">
+  <meta property="og:description" content="Recent Warzone matches for ALPHA Clan.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
+  <div class="scanlines" aria-hidden="true"></div>
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-bracket">[</span><span class="logo-text">ALPHA</span><span class="logo-bracket">]</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#stats">STATS</a>
+      <a href="roster.html">ROSTER</a>
+      <a href="matches.html" class="active">MATCHES</a>
+      <a href="social.html">FEED</a>
+      <a href="register.html">JOIN CLAN</a>
+    </div>
+    <div class="nav-burger">☰</div>
+  </nav>
+  <main>
+    <section style="padding:80px 40px;min-height:60vh;text-align:center">
+      <div class="section-label">// MISSION LOG</div>
+      <h1 class="section-title">RECENT MISSIONS</h1>
+      <p class="section-sub" style="max-width:600px;margin:16px auto 32px">Match history is logged automatically when operators link their stats.</p>
+      <div id="matchesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;max-width:1200px;margin:0 auto"></div>
+      <div id="matchesEmpty" style="display:none;color:var(--text-muted);padding:40px">
+        <p>No matches logged yet. Matches will appear here once clan members start tracking games.</p>
+      </div>
+    </section>
+  </main>
+  <script src="js/data.js"></script>
+  <script>
+    const grid = document.getElementById('matchesGrid');
+    const empty = document.getElementById('matchesEmpty');
+    if (typeof RECENT_MATCHES !== 'undefined' && RECENT_MATCHES.length > 0) {
+      grid.innerHTML = RECENT_MATCHES.map(m => {
+        const resultCls = m.result === 'win' ? 'result-win' : 'result-loss';
+        const resultEmoji = m.result === 'win' ? '🏆 WIN' : '💀 LOSS';
+        return `<div class="match-card" style="background:#161b22;border:1px solid ${m.result==='win'?'#238636':'#da3633'};border-radius:10px;padding:20px;text-align:left">
+          <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+            <div style="font-weight:600;color:#c9d1d9">${m.mode}</div>
+            <div style="color:${m.result==='win'?'#3fb950':'#f85149'};font-weight:700">${resultEmoji}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
+            <div>Kills: <b style="color:var(--accent)">${m.kills}</b></div>
+            <div>Place: <b style="color:var(--accent)">#${m.placement}</b></div>
+            <div>Deaths: <b style="color:#f85149">${m.deaths}</b></div>
+            <div>Assists: <b style="color:var(--accent)">${m.assists||0}</b></div>
+            <div>Damage: <b style="color:var(--accent)">${m.damage.toLocaleString()}</b></div>
+            <div>Duration: <b>${m.duration}</b></div>
+          </div>
+          <div style="margin-top:12px;font-size:11px;color:var(--text-muted)">${m.time}</div>
+        </div>`;
+      }).join('');
+    } else {
+      empty.style.display = 'block';
+    }
+  </script>
+  <script src="js/matrix.js"></script>
+</body>
+</html>

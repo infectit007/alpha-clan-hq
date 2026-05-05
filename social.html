@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALPHA | Clan Feed</title>
+  <meta name="description" content="ALPHA Clan social feed — latest announcements, match posts, and operator updates.">
+  <meta property="og:title" content="ALPHA Clan HQ | Feed">
+  <meta property="og:description" content="Latest updates from ALPHA Clan HQ.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="matrixCanvas" aria-hidden="true"></canvas>
+  <div class="scanlines" aria-hidden="true"></div>
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-bracket">[</span><span class="logo-text">ALPHA</span><span class="logo-bracket">]</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#stats">STATS</a>
+      <a href="roster.html">ROSTER</a>
+      <a href="matches.html">MATCHES</a>
+      <a href="social.html" class="active">FEED</a>
+      <a href="register.html">JOIN CLAN</a>
+    </div>
+    <div class="nav-burger">☰</div>
+  </nav>
+  <main>
+    <section style="padding:80px 40px;min-height:60vh;text-align:center">
+      <div class="section-label">// CLAN FEED</div>
+      <h1 class="section-title">SOCIAL FEED</h1>
+      <p class="section-sub" style="max-width:600px;margin:16px auto 32px">Clan announcements, match results, and operator activity. Powered by Supabase + Discord.</p>
+      <div id="feedContainer" style="max-width:700px;margin:0 auto"></div>
+      <div id="feedEmpty" style="display:none;color:var(--text-muted);padding:40px">
+        <p>No posts yet. The feed will populate once clan activity starts.</p>
+      </div>
+    </section>
+  </main>
+  <script src="js/supabase.js"></script>
+  <script>
+    document.addEventListener('supabase-ready', async () => {
+      const container = document.getElementById('feedContainer');
+      const empty = document.getElementById('feedEmpty');
+      try {
+        const { data: posts } = await window.supabaseClient
+          .from('posts')
+          .select('*, members(username)')
+          .order('created_at', { ascending: false })
+          .limit(20);
+        if (!posts || posts.length === 0) { empty.style.display = 'block'; return; }
+        container.innerHTML = posts.map(p => `
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:12px;text-align:left">
+            <div style="display:flex;align-items:center;margin-bottom:8px">
+              <span style="font-weight:600;color:var(--accent);font-size:13px">${p.members?.username||'Unknown'}</span>
+              <span style="margin-left:auto;font-size:11px;color:var(--text-muted)">${new Date(p.created_at).toLocaleString()}</span>
+            </div>
+            <p style="color:#c9d1d9;font-size:14px;margin:0">${p.content}</p>
+            ${p.image_url ? `<img src="${p.image_url}" style="max-width:100%;border-radius:4px;margin-top:8px" alt="post image">` : ''}
+          </div>
+        `).join('');
+      } catch(e) { empty.style.display = 'block'; }
+    });
+    setTimeout(() => { if (!document.getElementById('feedContainer').children.length) document.getElementById('feedEmpty').style.display = 'block'; }, 5000);
+  </script>
+  <script src="js/matrix.js"></script>
+</body>
+</html>
