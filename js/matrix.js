@@ -77,15 +77,16 @@
 
   // Run at ~30fps (enough for rain effect, keeps CPU low)
   let lastTime = 0;
+  let animFrameId;
   function loop(ts) {
     if (ts - lastTime > 33) {
       draw();
       lastTime = ts;
     }
-    requestAnimationFrame(loop);
+    animFrameId = requestAnimationFrame(loop);
   }
 
-  requestAnimationFrame(loop);
+  animFrameId = requestAnimationFrame(loop);
 
   // Handle resize
   let resizeTimer;
@@ -99,8 +100,8 @@
 
   // Pause when tab is hidden (saves CPU)
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) cancelAnimationFrame(loop);
-    else requestAnimationFrame(loop);
+    if (document.hidden) cancelAnimationFrame(animFrameId);
+    else animFrameId = requestAnimationFrame(loop);
   });
 
 })();

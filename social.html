@@ -8,62 +8,217 @@
   <meta property="og:title" content="ALPHA Clan HQ | Feed">
   <meta property="og:description" content="Latest updates from ALPHA Clan HQ.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
   <canvas id="matrixCanvas" aria-hidden="true"></canvas>
   <div class="scanlines" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <!-- ===== NAVBAR ===== -->
   <nav class="navbar">
-    <a href="index.html" class="nav-logo">
-      <span class="logo-bracket">[</span><span class="logo-text">ALPHA</span><span class="logo-bracket">]</span>
+    <a href="index.html" class="nav-logo" style="text-decoration:none;">
+      <span class="logo-bracket">[</span>
+      <span class="logo-text">ALPHA</span>
+      <span class="logo-bracket">]</span>
     </a>
-    <div class="nav-links">
-      <a href="index.html#stats">STATS</a>
-      <a href="roster.html">ROSTER</a>
-      <a href="matches.html">MATCHES</a>
-      <a href="social.html" class="active">FEED</a>
-      <a href="register.html">JOIN CLAN</a>
-    </div>
-    <div class="nav-burger">☰</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#stats" class="nav-link">STATS</a></li>
+      <li><a href="roster.html" class="nav-link">ROSTER</a></li>
+      <li><a href="matches.html" class="nav-link">MATCHES</a></li>
+      <li><a href="social.html" class="nav-link active">FEED</a></li>
+      <li><a href="register.html" class="nav-link nav-cta">JOIN CLAN</a></li>
+      <li><a href="login.html" class="nav-link">LOGIN</a></li>
+    </ul>
+    <button class="nav-burger" id="navBurger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
-  <main>
-    <section style="padding:80px 40px;min-height:60vh;text-align:center">
+
+  <!-- ===== MAIN ===== -->
+  <main class="inner-page">
+
+    <!-- Page header -->
+    <div class="inner-page-header">
       <div class="section-label">// CLAN FEED</div>
       <h1 class="section-title">SOCIAL FEED</h1>
-      <p class="section-sub" style="max-width:600px;margin:16px auto 32px">Clan announcements, match results, and operator activity. Powered by Supabase + Discord.</p>
-      <div id="feedContainer" style="max-width:700px;margin:0 auto"></div>
-      <div id="feedEmpty" style="display:none;color:var(--text-muted);padding:40px">
-        <p>No posts yet. The feed will populate once clan activity starts.</p>
+      <p class="section-sub">Clan announcements, match results, and operator activity. Powered by Supabase.</p>
+    </div>
+
+    <!-- Offline banner -->
+    <div class="backend-banner" id="backendBanner" style="display:none;">
+      <span class="backend-banner-dot"></span>
+      <span id="backendMsg">BACKEND OFFLINE — FEED UNAVAILABLE</span>
+    </div>
+
+    <!-- Feed container -->
+    <div class="feed-wrap">
+
+      <!-- Skeletons (shown while loading) -->
+      <div id="feedSkeleton">
+        <div class="feed-post">
+          <div class="feed-post-header">
+            <div class="skeleton-avatar skeleton-pulse" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div>
+            <div style="flex:1;margin-left:10px;">
+              <div class="skeleton-line w40 skeleton-pulse" style="margin-bottom:0;"></div>
+            </div>
+            <div class="skeleton-line w40 skeleton-pulse" style="width:80px;height:10px;margin-bottom:0;"></div>
+          </div>
+          <div class="skeleton-line w100 skeleton-pulse" style="margin-top:12px;height:14px;"></div>
+          <div class="skeleton-line w80 skeleton-pulse" style="height:14px;"></div>
+        </div>
+        <div class="feed-post">
+          <div class="feed-post-header">
+            <div class="skeleton-avatar skeleton-pulse" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div>
+            <div style="flex:1;margin-left:10px;">
+              <div class="skeleton-line w40 skeleton-pulse" style="margin-bottom:0;"></div>
+            </div>
+            <div class="skeleton-line w40 skeleton-pulse" style="width:80px;height:10px;margin-bottom:0;"></div>
+          </div>
+          <div class="skeleton-line w100 skeleton-pulse" style="margin-top:12px;height:14px;"></div>
+          <div class="skeleton-line w60 skeleton-pulse" style="height:14px;"></div>
+        </div>
+        <div class="feed-post">
+          <div class="feed-post-header">
+            <div class="skeleton-avatar skeleton-pulse" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div>
+            <div style="flex:1;margin-left:10px;">
+              <div class="skeleton-line w40 skeleton-pulse" style="margin-bottom:0;"></div>
+            </div>
+            <div class="skeleton-line w40 skeleton-pulse" style="width:80px;height:10px;margin-bottom:0;"></div>
+          </div>
+          <div class="skeleton-line w80 skeleton-pulse" style="margin-top:12px;height:14px;"></div>
+          <div class="skeleton-line w100 skeleton-pulse" style="height:14px;"></div>
+        </div>
       </div>
-    </section>
+
+      <!-- Posts (populated by JS) -->
+      <div id="feedContainer"></div>
+
+      <!-- Load more -->
+      <div class="feed-load-more" id="feedLoadMore" style="display:none;">
+        <button class="btn btn-ghost" id="loadMoreBtn">LOAD MORE ↓</button>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" id="feedEmpty" style="display:none;">
+        <div class="empty-state-icon">◈</div>
+        <h3 class="empty-state-title">NO ACTIVITY YET</h3>
+        <p class="empty-state-sub">The feed will populate once approved operators start posting. Be the first — join the clan.</p>
+        <a href="register.html" class="btn btn-primary" style="margin-top:24px;">REQUEST ACCESS</a>
+      </div>
+
+    </div>
   </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-logo">
+      <span class="logo-bracket">[</span>ALPHA<span class="logo-bracket">]</span>
+    </div>
+    <p class="footer-sub">ALPHA Clan HQ · Warzone · Private Platform</p>
+  </footer>
+
   <script src="js/supabase.js"></script>
+  <script src="js/matrix.js"></script>
   <script>
-    document.addEventListener('supabase-ready', async () => {
-      const container = document.getElementById('feedContainer');
-      const empty = document.getElementById('feedEmpty');
+    // ===== NAV BURGER =====
+    document.getElementById('navBurger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('nav-open');
+    });
+
+    // ===== HELPERS =====
+    function getInitials(name) {
+      return (name || '?').toUpperCase().slice(0, 2);
+    }
+
+    function timeAgo(dateStr) {
+      const diff  = Date.now() - new Date(dateStr).getTime();
+      const mins  = Math.floor(diff / 60000);
+      const hours = Math.floor(mins / 60);
+      const days  = Math.floor(hours / 24);
+      if (days > 0)  return days + 'd ago';
+      if (hours > 0) return hours + 'h ago';
+      if (mins > 0)  return mins + 'm ago';
+      return 'just now';
+    }
+
+    function renderPost(p) {
+      const author   = p.members?.username || 'Unknown';
+      const initials = getInitials(author);
+      const time     = p.created_at ? timeAgo(p.created_at) : '';
+      const content  = (p.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `
+        <div class="feed-post">
+          <div class="feed-post-header">
+            <div class="feed-post-avatar">${initials}</div>
+            <div>
+              <div class="feed-post-author">${author}</div>
+            </div>
+            <span class="feed-post-time">${time}</span>
+          </div>
+          <div class="feed-post-content">${content}</div>
+          ${p.image_url ? `<img src="${p.image_url}" class="feed-post-image" alt="post image" loading="lazy">` : ''}
+        </div>
+      `;
+    }
+
+    // ===== LOAD =====
+    let currentOffset = 0;
+    const PAGE_SIZE   = 20;
+
+    async function loadFeed(append = false) {
+      const supabaseReady = await Promise.race([
+        new Promise(res => document.addEventListener('supabase-ready', () => res(true), { once: true })),
+        new Promise(res => setTimeout(() => res(false), 3500)),
+      ]);
+
+      document.getElementById('feedSkeleton').style.display = 'none';
+
+      if (!supabaseReady || !window.supabaseClient) {
+        document.getElementById('backendBanner').style.display = 'flex';
+        document.getElementById('backendMsg').textContent = 'BACKEND OFFLINE — FEED UNAVAILABLE';
+        document.getElementById('feedEmpty').style.display = 'flex';
+        return;
+      }
+
       try {
-        const { data: posts } = await window.supabaseClient
+        const { data: posts, error } = await window.supabaseClient
           .from('posts')
           .select('*, members(username)')
           .order('created_at', { ascending: false })
-          .limit(20);
-        if (!posts || posts.length === 0) { empty.style.display = 'block'; return; }
-        container.innerHTML = posts.map(p => `
-          <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:12px;text-align:left">
-            <div style="display:flex;align-items:center;margin-bottom:8px">
-              <span style="font-weight:600;color:var(--accent);font-size:13px">${p.members?.username||'Unknown'}</span>
-              <span style="margin-left:auto;font-size:11px;color:var(--text-muted)">${new Date(p.created_at).toLocaleString()}</span>
-            </div>
-            <p style="color:#c9d1d9;font-size:14px;margin:0">${p.content}</p>
-            ${p.image_url ? `<img src="${p.image_url}" style="max-width:100%;border-radius:4px;margin-top:8px" alt="post image">` : ''}
-          </div>
-        `).join('');
-      } catch(e) { empty.style.display = 'block'; }
-    });
-    setTimeout(() => { if (!document.getElementById('feedContainer').children.length) document.getElementById('feedEmpty').style.display = 'block'; }, 5000);
+          .range(currentOffset, currentOffset + PAGE_SIZE - 1);
+
+        if (error) throw error;
+
+        const container  = document.getElementById('feedContainer');
+        const loadMore   = document.getElementById('feedLoadMore');
+        const emptyState = document.getElementById('feedEmpty');
+
+        if (!posts || posts.length === 0) {
+          if (!append) emptyState.style.display = 'flex';
+          loadMore.style.display = 'none';
+          return;
+        }
+
+        emptyState.style.display = 'none';
+        container.insertAdjacentHTML('beforeend', posts.map(renderPost).join(''));
+        currentOffset += posts.length;
+
+        loadMore.style.display = posts.length === PAGE_SIZE ? 'flex' : 'none';
+
+      } catch (err) {
+        document.getElementById('backendBanner').style.display = 'flex';
+        document.getElementById('backendMsg').textContent = 'BACKEND OFFLINE — FEED UNAVAILABLE';
+        if (currentOffset === 0) document.getElementById('feedEmpty').style.display = 'flex';
+      }
+    }
+
+    document.getElementById('loadMoreBtn').addEventListener('click', () => loadFeed(true));
+
+    loadFeed();
   </script>
-  <script src="js/matrix.js"></script>
 </body>
 </html>

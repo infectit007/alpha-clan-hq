@@ -8,64 +8,199 @@
   <meta property="og:title" content="ALPHA Clan HQ | Matches">
   <meta property="og:description" content="Recent Warzone matches for ALPHA Clan.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
   <canvas id="matrixCanvas" aria-hidden="true"></canvas>
   <div class="scanlines" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <!-- ===== NAVBAR ===== -->
   <nav class="navbar">
-    <a href="index.html" class="nav-logo">
-      <span class="logo-bracket">[</span><span class="logo-text">ALPHA</span><span class="logo-bracket">]</span>
+    <a href="index.html" class="nav-logo" style="text-decoration:none;">
+      <span class="logo-bracket">[</span>
+      <span class="logo-text">ALPHA</span>
+      <span class="logo-bracket">]</span>
     </a>
-    <div class="nav-links">
-      <a href="index.html#stats">STATS</a>
-      <a href="roster.html">ROSTER</a>
-      <a href="matches.html" class="active">MATCHES</a>
-      <a href="social.html">FEED</a>
-      <a href="register.html">JOIN CLAN</a>
-    </div>
-    <div class="nav-burger">☰</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html#stats" class="nav-link">STATS</a></li>
+      <li><a href="roster.html" class="nav-link">ROSTER</a></li>
+      <li><a href="matches.html" class="nav-link active">MATCHES</a></li>
+      <li><a href="social.html" class="nav-link">FEED</a></li>
+      <li><a href="register.html" class="nav-link nav-cta">JOIN CLAN</a></li>
+      <li><a href="login.html" class="nav-link">LOGIN</a></li>
+    </ul>
+    <button class="nav-burger" id="navBurger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
-  <main>
-    <section style="padding:80px 40px;min-height:60vh;text-align:center">
+
+  <!-- ===== MAIN ===== -->
+  <main class="inner-page">
+
+    <!-- Page header -->
+    <div class="inner-page-header">
       <div class="section-label">// MISSION LOG</div>
       <h1 class="section-title">RECENT MISSIONS</h1>
-      <p class="section-sub" style="max-width:600px;margin:16px auto 32px">Match history is logged automatically when operators link their stats.</p>
-      <div id="matchesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;max-width:1200px;margin:0 auto"></div>
-      <div id="matchesEmpty" style="display:none;color:var(--text-muted);padding:40px">
-        <p>No matches logged yet. Matches will appear here once clan members start tracking games.</p>
-      </div>
-    </section>
+      <p class="section-sub">Match history logged per session. Wins, kills, placement, squad.</p>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="matches-filter-bar">
+      <span class="filter-label">FILTER:</span>
+      <button class="mode-btn active" data-filter="all">ALL</button>
+      <button class="mode-btn" data-filter="win">WINS ONLY</button>
+      <button class="mode-btn" data-filter="loss">LOSSES ONLY</button>
+    </div>
+
+    <!-- Match grid -->
+    <div class="matches-grid" id="matchesGrid"></div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="matchesEmpty" style="display:none;">
+      <div class="empty-state-icon">⬡</div>
+      <h3 class="empty-state-title">NO MISSIONS LOGGED</h3>
+      <p class="empty-state-sub">Match history will appear here once clan members start tracking their games.</p>
+    </div>
+
   </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-logo">
+      <span class="logo-bracket">[</span>ALPHA<span class="logo-bracket">]</span>
+    </div>
+    <p class="footer-sub">ALPHA Clan HQ · Warzone · Private Platform</p>
+  </footer>
+
   <script src="js/data.js"></script>
-  <script>
-    const grid = document.getElementById('matchesGrid');
-    const empty = document.getElementById('matchesEmpty');
-    if (typeof RECENT_MATCHES !== 'undefined' && RECENT_MATCHES.length > 0) {
-      grid.innerHTML = RECENT_MATCHES.map(m => {
-        const resultCls = m.result === 'win' ? 'result-win' : 'result-loss';
-        const resultEmoji = m.result === 'win' ? '🏆 WIN' : '💀 LOSS';
-        return `<div class="match-card" style="background:#161b22;border:1px solid ${m.result==='win'?'#238636':'#da3633'};border-radius:10px;padding:20px;text-align:left">
-          <div style="display:flex;justify-content:space-between;margin-bottom:12px">
-            <div style="font-weight:600;color:#c9d1d9">${m.mode}</div>
-            <div style="color:${m.result==='win'?'#3fb950':'#f85149'};font-weight:700">${resultEmoji}</div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
-            <div>Kills: <b style="color:var(--accent)">${m.kills}</b></div>
-            <div>Place: <b style="color:var(--accent)">#${m.placement}</b></div>
-            <div>Deaths: <b style="color:#f85149">${m.deaths}</b></div>
-            <div>Assists: <b style="color:var(--accent)">${m.assists||0}</b></div>
-            <div>Damage: <b style="color:var(--accent)">${m.damage.toLocaleString()}</b></div>
-            <div>Duration: <b>${m.duration}</b></div>
-          </div>
-          <div style="margin-top:12px;font-size:11px;color:var(--text-muted)">${m.time}</div>
-        </div>`;
-      }).join('');
-    } else {
-      empty.style.display = 'block';
-    }
-  </script>
+  <script src="js/discord.js"></script>
   <script src="js/matrix.js"></script>
+  <script>
+    // ===== NAV BURGER =====
+    document.getElementById('navBurger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('nav-open');
+    });
+
+    // ===== HELPERS =====
+    function getAvatarStyle(idx) {
+      const c = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+      return `background:${c.bg};color:${c.color};`;
+    }
+
+    function getInitials(name) {
+      return (name || '?').toUpperCase().split('_').map(w => w[0] || '').join('').slice(0, 2) || '??';
+    }
+
+    // ===== RENDER =====
+    let activeFilter = 'all';
+
+    function renderMatches() {
+      const grid  = document.getElementById('matchesGrid');
+      const empty = document.getElementById('matchesEmpty');
+
+      let matches = typeof RECENT_MATCHES !== 'undefined' ? [...RECENT_MATCHES] : [];
+
+      if (activeFilter !== 'all') {
+        matches = matches.filter(m => m.result === activeFilter);
+      }
+
+      if (matches.length === 0) {
+        grid.innerHTML = '';
+        empty.style.display = 'flex';
+        return;
+      }
+
+      empty.style.display = 'none';
+      grid.innerHTML = matches.map(m => {
+        const playerDots = (m.players || []).map(idx => {
+          const p = (typeof PLAYERS !== 'undefined' && PLAYERS[idx]) ? PLAYERS[idx] : null;
+          if (!p) return '';
+          return `<div class="match-player-dot" style="${getAvatarStyle(p.avatar)}" title="${p.name}">${getInitials(p.name)}</div>`;
+        }).join('');
+
+        return `
+          <div class="match-card ${m.result}">
+            <div class="match-header">
+              <div class="match-mode">${m.mode}</div>
+              <div class="match-result result-${m.result}">${m.result.toUpperCase()}</div>
+            </div>
+            <div class="match-stats">
+              <div class="match-stat">
+                <span class="match-stat-val">${m.kills}</span>
+                <span class="match-stat-label">KILLS</span>
+              </div>
+              <div class="match-stat">
+                <span class="match-stat-val">#${m.placement}</span>
+                <span class="match-stat-label">PLACE</span>
+              </div>
+              <div class="match-stat">
+                <span class="match-stat-val">${(m.damage || 0).toLocaleString()}</span>
+                <span class="match-stat-label">DAMAGE</span>
+              </div>
+              <div class="match-stat">
+                <span class="match-stat-val">${m.duration || '—'}</span>
+                <span class="match-stat-label">DURATION</span>
+              </div>
+            </div>
+            ${playerDots ? `<div class="match-players">${playerDots}</div>` : ''}
+            <div class="match-footer">
+              <span class="match-time">${m.time || ''}</span>
+              <button class="match-share" onclick="shareMatch('${m.id}')">⬆ SHARE</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Filter buttons
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        renderMatches();
+      });
+    });
+
+    // Share match
+    window.shareMatch = function(matchId) {
+      const match = (typeof RECENT_MATCHES !== 'undefined') ? RECENT_MATCHES.find(m => m.id === matchId) : null;
+      if (!match) return;
+
+      const discordMatch = {
+        ...match,
+        players: (match.players || []).map(idx => {
+          const p = typeof PLAYERS !== 'undefined' ? PLAYERS[idx] : null;
+          return p ? p.name : 'Unknown';
+        }),
+      };
+
+      if (typeof postMatchToDiscord !== 'undefined') postMatchToDiscord(discordMatch);
+
+      const url = `${window.location.origin}${window.location.pathname}?id=${matchId}`;
+      if (navigator.share) {
+        navigator.share({ title: 'ALPHA Clan Match', url });
+      } else {
+        navigator.clipboard.writeText(url).then(() => showToast('Match link copied!'));
+      }
+    };
+
+    // Toast fallback
+    if (typeof showToast === 'undefined') {
+      window.showToast = function(msg) {
+        const t = document.createElement('div');
+        t.textContent = msg;
+        t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-family:var(--font-mono);font-size:12px;letter-spacing:0.1em;padding:10px 20px;border-radius:2px;z-index:9999;animation:fadeInUp 0.3s ease both;';
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+      };
+    }
+
+    renderMatches();
+  </script>
 </body>
 </html>

@@ -1140,3 +1140,332 @@ body > *:not(.scanlines):not(.bg-grid):not(#matrixCanvas) {
   .summary-divider { width: 60%; height: 1px; }
   .table-controls { flex-direction: column; align-items: flex-start; }
 }
+
+/* ===== INNER PAGE LAYOUT ===== */
+.inner-page {
+  padding: calc(var(--nav-h) + 60px) max(32px, 6vw) 80px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.inner-page-header {
+  margin-bottom: 40px;
+}
+
+/* ===== BACKEND OFFLINE BANNER ===== */
+.backend-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--amber-dim);
+  border: 1px solid rgba(255,176,32,0.25);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin-bottom: 24px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--amber);
+}
+
+.backend-banner-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex-shrink: 0;
+  animation: pulse 1.5s infinite;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.empty-state-icon {
+  font-family: var(--font-display);
+  font-size: 48px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.empty-state-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.empty-state-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 400px;
+  line-height: 1.7;
+}
+
+/* ===== SKELETON LOADING ===== */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+.skeleton-pulse {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-line {
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+.skeleton-line.w60 { width: 60%; }
+.skeleton-line.w40 { width: 40%; }
+.skeleton-line.w80 { width: 80%; }
+.skeleton-line.w100 { width: 100%; }
+
+.skeleton-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.skeleton-stat {
+  height: 40px;
+  border-radius: var(--radius-sm);
+}
+
+/* ===== ROSTER GRID & CARDS ===== */
+.roster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.roster-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  backdrop-filter: blur(6px);
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+.roster-card:hover {
+  border-color: rgba(255,255,255,0.12);
+  transform: translateY(-2px);
+}
+
+.roster-skeleton {
+  cursor: default;
+}
+
+.roster-skeleton:hover {
+  transform: none;
+  border-color: var(--border);
+}
+
+.roster-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.roster-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.roster-card-info .player-name {
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.roster-card-info .player-tag {
+  margin-bottom: 8px;
+}
+
+.placeholder-badge {
+  position: absolute;
+  top: 0; right: 0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--amber);
+  background: var(--amber-dim);
+  border: 1px solid rgba(255,176,32,0.2);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.roster-card-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.roster-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+}
+
+.roster-stat-val {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.roster-stat-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+/* ===== MATCHES FILTER ===== */
+.matches-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-right: 4px;
+}
+
+/* ===== SOCIAL FEED ===== */
+.feed-wrap {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.feed-post {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(6px);
+  transition: border-color var(--transition);
+}
+
+.feed-post:hover {
+  border-color: rgba(255,255,255,0.1);
+}
+
+.feed-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.feed-post-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--accent-glow);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid var(--border-accent);
+}
+
+.feed-post-author {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+
+.feed-post-time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-left: auto;
+  letter-spacing: 0.06em;
+}
+
+.feed-post-content {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.feed-post-image {
+  display: block;
+  max-width: 100%;
+  border-radius: var(--radius);
+  margin-top: 12px;
+  border: 1px solid var(--border);
+}
+
+.feed-load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+/* ===== MOBILE NAV OPEN STATE ===== */
+@media (max-width: 768px) {
+  .nav-links.nav-open {
+    display: flex !important;
+    flex-direction: column;
+    position: absolute;
+    top: var(--nav-h);
+    left: 0; right: 0;
+    background: rgba(5,6,8,0.97);
+    padding: 16px;
+    border-bottom: 1px solid rgba(57,255,20,0.15);
+    z-index: 99;
+    backdrop-filter: blur(12px);
+  }
+  .nav-links.nav-open li { list-style: none; }
+  .nav-links.nav-open .nav-link { display: block; padding: 10px 14px; }
+
+  .inner-page { padding-left: 20px; padding-right: 20px; }
+  .roster-grid { grid-template-columns: 1fr; }
+  .roster-card-stats { grid-template-columns: repeat(4, 1fr); }
+}
