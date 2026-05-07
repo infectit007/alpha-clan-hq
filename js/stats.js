@@ -3,7 +3,7 @@
 // Pulls live Warzone stats via Vercel proxy
 // ============================================
 
-const PROXY_URL = 'https://alpha-clan-proxy-bphy-a8209h2ds-infectit007s-projects.vercel.app';
+const PROXY_URL = 'https://alpha-clan-proxy-infectit007s-projects.vercel.app';
 
 // Cache stats for 10 minutes to avoid hammering the API
 const statsCache = {};
