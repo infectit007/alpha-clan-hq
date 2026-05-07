@@ -32,7 +32,7 @@ window.postMatchToDiscord = async function(match) {
 
   const payload = {
     username: 'ALPHA Match Bot',
-    avatar_url: 'https://infectit007.github.io/alpha-clan-hq/assets/logo.png',
+    avatar_url: 'https://raw.githubusercontent.com/infectit007/alpha-clan-hq/main/assets/logo.png',
     embeds: [{
       title: `${resultEmoji} ${match.mode}`,
       color: resultColor,

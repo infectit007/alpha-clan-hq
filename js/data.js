@@ -7,10 +7,10 @@ const CLAN_DATA = {
   name: "ALPHA",
   season: "S06",
   region: "NA-EAST",
-  rank: 0,
-  avgKD: 0,
-  wins: 0,
-  members: 1,
+  rank: 42,
+  avgKD: 2.64,
+  wins: 334,
+  members: 8,
   updateStats: function(stats) {
     this.rank = stats.rank || this.rank;
     this.avgKD = stats.avgKD || this.avgKD;
@@ -245,7 +245,7 @@ const REAL_PLAYERS = [
 // ===== PRIORITY SYSTEM =====
 // Auto-set: true when >= 5 real members exist, false otherwise
 // Override manually if needed (set false to always show placeholders)
-const HIDE_PLACEHOLDERS = true;
+const HIDE_PLACEHOLDERS = false;
 
 // This is what the app uses — real players first, placeholders after (or hidden)
 const ALL_PLAYERS = [
