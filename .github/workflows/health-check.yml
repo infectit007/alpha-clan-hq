@@ -29,10 +29,10 @@ jobs:
             ISSUES="$ISSUES,site:HTTP_$HTTP"
           fi
 
-          # Check Supabase
-          SB=$(curl -s --max-time 10 "https://ywqcmrfkguuofhyfbuxb.supabase.co/rest/v1/" \
+          # Check Supabase (query members table with anon key)
+          SB=$(curl -s --max-time 10 "https://ywqcmrfkguuofhyfbuxb.supabase.co/rest/v1/members?select=count" \
             -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3cWNtcmZrZ3V1b2ZoeWZidXhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjI3MjgsImV4cCI6MjA5MzQ5ODcyOH0.nFXnFeDeSAOaw0ShQCnU1BJGtO4vAa3AgKMqHyD-fhY" 2>&1)
-          if ! echo "$SB" | grep -q "swagger"; then
+          if ! echo "$SB" | grep -q "count"; then
             STATUS="${STATUS}degraded"
             ISSUES="$ISSUES,supabase:unreachable"
           fi
