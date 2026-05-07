@@ -263,7 +263,7 @@
 
     // ===== LOAD =====
     async function loadRoster() {
-      const supabaseReady = await Promise.race([
+      const supabaseReady = window.supabaseClient ? true : await Promise.race([
         new Promise(res => document.addEventListener('supabase-ready', () => res(true), { once: true })),
         new Promise(res => setTimeout(() => res(false), 3000)),
       ]);
