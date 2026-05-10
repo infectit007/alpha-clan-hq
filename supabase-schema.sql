@@ -55,14 +55,26 @@ ALTER TABLE members  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE posts    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE match_log ENABLE ROW LEVEL SECURITY;
 
--- Members: anyone can INSERT (register), approved members can read
+-- Members: anyone can INSERT (register)
 CREATE POLICY "Anyone can register" ON members
   FOR INSERT WITH CHECK (true);
 
+-- Approved members can see other approved members OR their own record
 CREATE POLICY "Approved members can view roster" ON members
   FOR SELECT USING (
     status = 'approved' OR
     auth.uid() = user_id
+  );
+
+-- Soldiers+ can view ALL members (including pending) — REQUIRED for admin approval panel
+CREATE POLICY "Soldiers+ can view all members" ON members
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM members m
+      WHERE m.user_id = auth.uid()
+      AND m.rank IN ('SOLDIER','COMMANDER','FOUNDER')
+      AND m.status = 'approved'
+    )
   );
 
 CREATE POLICY "Soldiers+ can update member status" ON members
